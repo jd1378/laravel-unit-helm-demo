@@ -11,7 +11,7 @@ imagePullSecrets: []
 # Configure Laravel Worker container.
 app:
   image:
-    repository: quay.io/renokico/laravel-helm-demo
+    repository: javadmnjd/laravel-helm-demo
     pullPolicy: IfNotPresent
     tag: "worker-0.6.0"
 

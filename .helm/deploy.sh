@@ -41,17 +41,10 @@ kubectl apply -f secret.yaml
 helm repo add jd1378 https://helm.renoki.org
 helm repo update
 
-# Deploy the Laravel app.
-# helm upgrade laravel \
-#     --version=0.9.0 \
-#     -f laravel-values.yaml \
-#     --install \
-#     renoki-co/laravel
-
-# Alternative: Deploy the Laravel app with Octane.
+# Deploy the Laravel app with unit.
 helm upgrade laravel \
     --version=0.3.0 \
-    -f laravel-octane-values.yaml \
+    -f laravel-values.yaml \
     --install \
     jd1378/laravel-unit
 

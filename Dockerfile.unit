@@ -1,0 +1,15 @@
+# https://github.com/renoki-co/laravel-docker-base
+FROM javadmnjd/nginx-unit-alpine-php:unit1.28.0-php8.1
+
+COPY --from=composer:2.4 /usr/bin/composer /usr/bin/
+
+COPY . /var/www/
+
+RUN set -ex \
+    && composer install --optimize-autoloader --no-dev \
+    && mkdir -p /var/www/storage/logs/ \
+    && chown -R www-data:www-data /var/www \
+    && mv /var/www/.unit.config.json /docker-entrypoint.d/.unit.config.json \
+    && mv /var/www/deploy.sh /docker-entrypoint.d/deploy.sh
+
+WORKDIR /var/www/

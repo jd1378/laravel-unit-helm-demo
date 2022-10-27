@@ -1,13 +1,16 @@
 # https://github.com/renoki-co/laravel-docker-base
-FROM quay.io/renokico/laravel-base:worker-1.2.0-8.0-cli-alpine
+FROM javadmnjd/php-alpine:php8.1-alpine3.16
 
-COPY . /var/www/html
+COPY --from=composer:2.4 /usr/bin/composer /usr/bin/
 
-RUN mkdir -p /var/www/html/storage/logs/ && \
-    chown -R www-data:www-data /var/www/html && \
-    rm -rf tests/ .git/ .github/ *.md && \
-    rm -rf vendor/*/test/ vendor/*/tests/*
+COPY . /var/www/
 
-WORKDIR /var/www/html
+WORKDIR /var/www/
+
+RUN set -ex \
+    && composer install --optimize-autoloader --no-dev \
+    && mkdir -p /var/www/storage/logs/ \
+    && chown -R www-data:www-data /var/www \
+    && mv /var/www/deploy.sh /docker-entrypoint.d/deploy.sh
 
 ENTRYPOINT ["php", "-a"]

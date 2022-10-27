@@ -9,12 +9,12 @@ on:
       - "*"
 
 jobs:
-  fpm_push:
+  unit_push:
     if: "!contains(github.event.head_commit.message, 'skip ci')"
 
     runs-on: ubuntu-latest
 
-    name: Tag Commit (PHP-FPM)
+    name: Tag Commit (Unit)
 
     steps:
       - uses: actions/checkout@v3
@@ -22,7 +22,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: 8.0
+          php-version: 8.1
           extensions: dom, curl, intl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite
           coverage: pcov
 
@@ -38,10 +38,10 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
-      - name: Login to Quay
+      - name: Login to Dockerhub
         uses: docker/login-action@v2
         with:
-          registry: quay.io
+          registry: https://registry.hub.docker.com
           username: ${{ secrets.DOCKER_REGISTRY_USERNAME }}
           password: ${{ secrets.DOCKER_REGISTRY_TOKEN }}
 
@@ -55,57 +55,8 @@ jobs:
         with:
           push: true
           context: .
-          tags: quay.io/renokico/laravel-helm-demo:${{ github.sha }}
-          file: Dockerfile.fpm
-
-  octane_push:
-    if: "!contains(github.event.head_commit.message, 'skip ci')"
-
-    runs-on: ubuntu-latest
-
-    name: Tag Commit (Octane)
-
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: 8.0
-          extensions: dom, curl, intl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite
-          coverage: pcov
-
-      - uses: actions/cache@v3.0.5
-        name: Cache Composer dependencies
-        with:
-          path: ~/.composer/cache/files
-          key: composer-${{ hashFiles('composer.json') }}
-
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-
-      - name: Login to Quay
-        uses: docker/login-action@v2
-        with:
-          registry: quay.io
-          username: ${{ secrets.DOCKER_REGISTRY_USERNAME }}
-          password: ${{ secrets.DOCKER_REGISTRY_TOKEN }}
-
-      - name: Install dependencies
-        run: |
-          composer install --no-interaction --no-progress --prefer-dist --optimize-autoloader --no-dev
-
-      - name: Build and push
-        id: docker
-        uses: docker/build-push-action@v3
-        with:
-          push: true
-          context: .
-          tags: quay.io/renokico/laravel-helm-demo:octane-${{ github.sha }}
-          file: Dockerfile.octane
+          tags: jd1378/laravel-helm-demo:${{ github.sha }}
+          file: Dockerfile.unit
 
   worker_push:
     if: "!contains(github.event.head_commit.message, 'skip ci')"
@@ -120,7 +71,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: 8.0
+          php-version: 8.1
           extensions: dom, curl, intl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite
           coverage: pcov
 
@@ -136,10 +87,10 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
-      - name: Login to Quay
+      - name: Login to Dockerhub
         uses: docker/login-action@v2
         with:
-          registry: quay.io
+          registry: https://registry.hub.docker.com
           username: ${{ secrets.DOCKER_REGISTRY_USERNAME }}
           password: ${{ secrets.DOCKER_REGISTRY_TOKEN }}
 
@@ -153,5 +104,5 @@ jobs:
         with:
           push: true
           context: .
-          tags: quay.io/renokico/laravel-helm-demo:worker-${{ github.sha }}
-          file: Dockerfile.worker
+          tags: jd1378/laravel-helm-demo:${{ github.sha }}
+          file: Dockerfile.unit

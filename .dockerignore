@@ -20,7 +20,6 @@ storage/*.key
 
 
 node_modules
-vendor
 
 storage/app/*
 storage/framework/cache/*

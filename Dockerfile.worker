@@ -1,16 +1,15 @@
-# https://github.com/renoki-co/laravel-docker-base
-FROM javadmnjd/php-alpine:php8.1-alpine3.16
+# since we cache composer and packages in github ci, no need to install them here 
 
-COPY --from=composer:2.4 /usr/bin/composer /usr/bin/
+FROM javadmnjd/php-alpine:php8.1-alpine3.16
 
 COPY . /var/www/
 
 WORKDIR /var/www/
 
 RUN set -ex \
-    && composer install --optimize-autoloader --no-dev \
     && mkdir -p /var/www/storage/logs/ \
     && chown -R www-data:www-data /var/www \
+    && rm -rf vendor/*/test/ vendor/*/tests/* \
     && mv /var/www/deploy.sh /docker-entrypoint.d/deploy.sh
 
 ENTRYPOINT ["php", "-a"]

@@ -1,8 +1,6 @@
 - [Laravel Helm Demo](#laravel-helm-demo)
-  - [🤝 Supporting](#-supporting)
   - [Building Image](#building-image)
-    - [NGINX + PHP-FPM](#nginx--php-fpm)
-    - [Octane](#octane)
+    - [Laravel + NGINX Unit](#laravel--nginx-unit)
     - [Workers](#workers)
     - [Installing Dependencies](#installing-dependencies)
     - [Deploy Script](#deploy-script)
@@ -12,45 +10,34 @@
     - [Database](#database)
     - [Filesystems](#filesystems)
     - [Autoscaling](#autoscaling)
-    - [Scaling Horizon & Octane](#scaling-horizon--octane)
+    - [Scaling Horizon](#scaling-horizon)
 
 # Laravel Helm Demo
 
-Run Laravel on Kubernetes using Helm. This project is horizontal scale-ready, and it can either be used with NGINX + PHP-FPM or Octane.
+** DO NOT USE THIS, THIS IS NOT READY **
 
-## 🤝 Supporting
-
-**If you are using one or more Renoki Co. open-source packages in your production apps, in presentation demos, hobby projects, school projects or so, sponsor our work with [Github Sponsors](https://github.com/sponsors/rennokki). 📦**
-
-[<img src="https://github-content.s3.fr-par.scw.cloud/static/25.jpg" height="210" width="418" />](https://github-content.renoki.org/github-repo/25)
+Run Laravel with nginx unit on Kubernetes using Helm. This project is horizontal scale-ready. forked from https://github.com/renoki-co/laravel-helm-demo , he has created the original charts, I just forked and edited for use with nginx unit, so most of the credit goes to him.
 
 ## Building Image
 
-This project offers three alternative to build an image:
+This project offers two alternative to build an image:
 
-- for PHP-FPM + NGINX projects (using `Dockerfile.fpm`)
-- for Octane (using `Dockerfile.octane`)
+- for laravel + NGINX Unit projects (using `Dockerfile.unit`)
 - for Workers (like CLI commands, using `Dockerfile.worker`)
 
-All images are based on [Laravel Docker Base images](https://github.com/renoki-co/laravel-docker-base), a small repository that contains Dockerfiles that already compile the extensions and enable them, to speed up the project deployment, since the same extensions are always installed during the normal project CI/CD pipeline.
+images are based on my own [PHP Alpine](https://gitlab.com/jd1378/php-alpine) and [nginx-unit-alpine-php](https://gitlab.com/jd1378/nginx-unit-alpine-php) images.
 
-### NGINX + PHP-FPM
+### Laravel + NGINX Unit
 
-The images generated with NGINX + PHP-FPM are using [renoki-co/laravel chart](https://github.com/renoki-co/charts/tree/master/charts/laravel) and you may find there the documentation on how to deploy the chart.
+The images generated with Laravel + NGINX Unit are using [jd1378/laravel chart](https://github.com/jd1378/laravel-helm-charts/tree/master/charts/laravel) and you may find there the documentation on how to deploy the chart.
 
-Basically, the final Docker image will be built using the `Dockerfile.fpm` file. It includes logs creation, permission changes and eventually clearing up additional files that you may not want to clutter your image with.
-
-### Octane
-
-The images generated with Octane are using [renoki-co/laravel-octane chart](https://github.com/renoki-co/charts/tree/master/charts/laravel-octane) and you may find there the documentation on how to deploy the chart.
-
-The `Dockerfile.octane` file will guide the image to be built in the same manner as the usual PHP-FPM version, but it comes with a lightweight PHP-Swoole image to start from. The defined entrypoint command can be later replaced in the Kubernetes Deployment configuration.
+Basically, the final Docker image will be built using the `Dockerfile.unit` file. It includes logs creation, permission changes and eventually clearing up additional files that you may not want to clutter your image with.
 
 ### Workers
 
-The images generated for Workers are using [renoki-co/laravel-worker chart](https://github.com/renoki-co/charts/tree/master/charts/laravel-worker) and you may find there the documentation on how to deploy the chart.
+The images generated for Workers are using [jd1378/laravel-worker chart](https://github.com/jd1378/laravel-helm-charts/tree/master/charts/laravel-worker) and you may find there the documentation on how to deploy the chart.
 
-Workers need only the PHP CLI to be available. It's almost like Octane, but some processes do not require Swoole, like Horizon.
+Workers need only the PHP CLI to be available.
 
 ### Installing Dependencies
 
@@ -70,7 +57,7 @@ Commands like `php artisan migrate` or `php artisan route:cache` are the most ap
 
 ### Deploying Chart
 
-A brief example can be found in `.helm/deploy.sh` on how to deploy a Laravel Octane application. You will also find optional Helm releases that might help you deploying the application, such as Prometheus for PHP-FPM + NGINX scaling or NGINX Ingress Controller to port NGINX to the app service.
+A brief example can be found in `.helm/deploy.sh` on how to deploy a Laravel application. You will also find optional Helm releases that might help you deploying the application, such as Prometheus for PHP-FPM + NGINX scaling or NGINX Ingress Controller to port NGINX to the app service.
 
 ### Configuring Environment Variables
 
@@ -90,32 +77,12 @@ Using local storage will delete all your stored files between pod lifecycles. Th
 
 ### Autoscaling
 
-For better understading of autoscaling, Prometheus and Prometheus Adapter may be used to scrap the PHP-FPM Process Manager's active children and scale pods up or down based on the number.
+For better understading of autoscaling, Prometheus and Prometheus Adapter may be used to scrap data from nginx unit and laravel application to scale pods up or down based on the numbers.
 
-There is an article that explains the way this works: [Scaling PHP FPM based on utilization demand on Kubernetes](https://blog.wyrihaximus.net/2021/01/scaling-php-fpm-based-on-utilization-demand-on-kubernetes/).
-
-The only setting you should be aware of is that there are two containers in the Laravel pod that expose metrics. To allow Prometheus to scrape them both, don't use the port annotation on the pod and add the following source label in the Prometheus job ([original gist](https://gist.github.com/bakins/5bf7d4e719f36c1c555d81134d8887eb)):
-
-```yaml
-jobs:
-  - job_name: 'kubernetes-pods'
-    ...
-
-    relabel_configs:
-      ...
-
-      - source_labels: [__meta_kubernetes_pod_container_port_name]
-        action: keep
-        regex: (.+)-metrics
-
-      ...
-```
-
-### Scaling Horizon & Octane
+### Scaling Horizon
 
 It is well known that for Kubernetes, you may scale based on CPU or memory allocated to each pod. But you can also scale based on Prometheus metrics.
 
 For ease of access, you may use the following exporters for your Laravel application:
 
 - [Laravel Horizon Exporter](https://github.com/renoki-co/horizon-exporter) - used to scale application pods that run the queue workers
-- [Laravel Octane Exporter](https://github.com/renoki-co/octane-exporter) - used to scale the Octane pods to ensure better parallelization

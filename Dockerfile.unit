@@ -13,3 +13,5 @@ RUN set -ex \
     && chown -R www-data:www-data /var/www \
     && mv /var/www/.unit.config.json /docker-entrypoint.d/.unit.config.json \
     && mv /var/www/deploy.sh /docker-entrypoint.d/deploy.sh
+
+EXPOSE 80

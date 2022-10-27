@@ -66,7 +66,10 @@
       "working_directory": "/var/www/",
       "root": "/var/www/public",
       "script": "index.php",
-      "index": "index.php"
+      "index": "index.php",
+      "options": {
+        "file": "/usr/local/etc/php/php.ini"
+      }
     }
   },
   "access_log": "/dev/stdout"

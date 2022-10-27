@@ -38,7 +38,7 @@
 # Deploy the Secret that will contain the .env file.
 kubectl apply -f secret.yaml
 
-helm repo add renoki-co https://helm.renoki.org
+helm repo add jd1378 https://helm.renoki.org
 helm repo update
 
 # Deploy the Laravel app.
@@ -49,15 +49,15 @@ helm repo update
 #     renoki-co/laravel
 
 # Alternative: Deploy the Laravel app with Octane.
-helm upgrade laravel-octane \
+helm upgrade laravel \
     --version=0.3.0 \
     -f laravel-octane-values.yaml \
     --install \
-    renoki-co/laravel-octane
+    jd1378/laravel-unit
 
 # Deploy (an example) worker for Laravel Queues.
 helm upgrade laravel-worker \
     --version=0.3.0 \
     -f laravel-worker-values.yaml \
     --install \
-    renoki-co/laravel-worker
+    jd1378/laravel-worker

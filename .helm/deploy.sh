@@ -38,7 +38,7 @@
 # Deploy the Secret that will contain the .env file.
 kubectl apply -f secret.yaml
 
-helm repo add jd1378 https://helm.renoki.org
+helm repo add jd1378 https://jd1378.github.io/laravel-helm-charts
 helm repo update
 
 # Deploy the Laravel app with unit.

@@ -55,7 +55,7 @@ jobs:
         with:
           push: true
           context: .
-          tags: jd1378/laravel-helm-demo:${{ github.sha }}
+          tags: javadmnjd/laravel-helm-demo:${{ github.sha }}
           file: Dockerfile.unit
 
   worker_push:
@@ -104,5 +104,5 @@ jobs:
         with:
           push: true
           context: .
-          tags: jd1378/laravel-helm-demo:${{ github.sha }}
-          file: Dockerfile.unit
+          tags: javadmnjd/laravel-helm-demo:${{ github.sha }}
+          file: Dockerfile.worker

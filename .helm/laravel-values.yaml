@@ -12,7 +12,7 @@ imagePullSecrets: []
 app:
   image:
     repository: docker.io/javadmnjd/laravel-helm-demo
-    pullPolicy: IfNotPresent
+    pullPolicy: Always
     tag: "0.7.0"
 
   # Specify the Secret name to pull the .env file from.

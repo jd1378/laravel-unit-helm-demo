@@ -4,10 +4,10 @@
 # Optional: deploy NGINX Ingress Controller into your cluster
 # to expose the ingress outside the cluster.
 
-# helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+# helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx 
 # helm repo update
 
-# helm upgrade nginx --version=3.26.0 -f extra/nginx-values.yaml --install ingress-nginx/ingress-nginx
+# helm upgrade nginx --version=4.3.0 -f extra/nginx-values.yaml --install ingress-nginx/ingress-nginx
 
 # PROMETHEUS
 # Optional: deploy Prometheus & Prometheus Adapter to scrape
@@ -38,7 +38,7 @@ helm repo add jd1378 https://jd1378.github.io/laravel-helm-charts
 helm repo update
 
 # Deploy the Laravel app with unit.
-helm upgrade laravel --version=^1.0.2 -f laravel-values.yaml --install jd1378/laravel-unit
+helm upgrade laravel --version=^1.0.3 -f laravel-values.yaml --install jd1378/laravel-unit
 
 # Deploy (an example) worker for Laravel Queues.
 helm upgrade laravel-worker --version=^1.0.1 -f laravel-worker-values.yaml --install jd1378/laravel-worker

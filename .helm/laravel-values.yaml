@@ -12,7 +12,7 @@ imagePullSecrets: []
 app:
   image:
     repository: docker.io/javadmnjd/laravel-helm-demo
-    pullPolicy: Always
+    pullPolicy: IfNotPresent
     tag: "0.7.0"
 
   # Specify the Secret name to pull the .env file from.
@@ -51,7 +51,7 @@ app:
   # returns a 200 OK when accessed. Implementing a healthcheck
   # controller like https://github.com/renoki-co/laravel-healthchecks is desirable.
   healthcheck:
-    enabled: false
+    enabled: true
     period: 5
     path: /health
 
